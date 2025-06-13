@@ -1,0 +1,10 @@
+// Schema definition for Stock Item API access control
+definition user {}
+
+definition stock_item {
+    relation creator: user
+    
+    permission view = creator
+    permission update = creator
+    permission delete = creator
+}

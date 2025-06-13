@@ -1,0 +1,31 @@
+services:
+  spicedb:
+    image: authzed/spicedb:latest
+    command: serve --http-enabled
+    environment:
+      - SPICEDB_GRPC_PRESHARED_KEY=somerandomtoken
+    ports:
+      - "50051:50051"
+      - "8443:8443"
+      - "9090:9090"
+    volumes:
+      - ./authzed/schema.zed:/schema.zed
+    healthcheck:
+      test: ["CMD", "grpc_health_probe", "-addr=:50051"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  inventory-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - AUTHZED_ENDPOINT=spicedb:50051
+      - AUTHZED_TOKEN=somerandomtoken
+      - GIN_MODE=debug
+    ports:
+      - "8080:8080"
+    depends_on:
+      spicedb:
+        condition: service_healthy

@@ -61,8 +61,16 @@ func (c *StockItemController) AddStockItem(ctx *gin.Context) {
 		return
 	}
 
-	c.service.AddStockItem(name, manufacturer, price, stock, userId)
-	ctx.JSON(http.StatusOK, gin.H{"message": "Stock item added successfully"})
+	// Call the service to add the item and get the ID
+	newItemId := c.service.AddStockItem(name, manufacturer, price, stock, userId)
+
+	// Store the new item ID in the context for the middleware to use
+	ctx.Set("newStockItemId", newItemId)
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "Stock item added successfully",
+		"id":      newItemId,
+	})
 }
 
 // UpdateStockItem handles PUT requests to update an existing stock item

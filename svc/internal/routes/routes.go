@@ -2,7 +2,10 @@
 package routes
 
 import (
+	"log"
+
 	"github.com/gin-gonic/gin"
+	"github.com/ibm/inventory-management/internal/authz"
 	"github.com/ibm/inventory-management/internal/controllers"
 	"github.com/ibm/inventory-management/internal/middleware"
 )
@@ -11,9 +14,22 @@ import (
 func SetupRouter(stockItemController *controllers.StockItemController) *gin.Engine {
 	router := gin.Default()
 
+	// Initialize AuthZed client
+	authzClient, err := authz.New()
+	if err != nil {
+		log.Printf("Warning: Failed to initialize AuthZed client: %v", err)
+		log.Println("Authorization checks will be skipped")
+	}
+
 	// Apply middleware
 	router.Use(middleware.CorsMiddleware())
 	router.Use(middleware.LoggingMiddleware())
+
+	// Apply AuthZ middleware if client is available
+	if authzClient != nil {
+		router.Use(middleware.AuthZMiddleware(authzClient))
+		router.Use(middleware.StoreCreatorRelationship(authzClient))
+	}
 
 	// Set up routes
 	router.GET("/stock-items", stockItemController.ListStockItems)

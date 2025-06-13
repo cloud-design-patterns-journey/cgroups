@@ -10,7 +10,7 @@ import (
 // StockItemService defines the interface for stock item operations
 type StockItemService interface {
 	ListStockItems(userId string) []models.StockItem
-	AddStockItem(name string, manufacturer string, price float64, stock int, userId string)
+	AddStockItem(name string, manufacturer string, price float64, stock int, userId string) string
 	UpdateStockItem(id string, name string, manufacturer string, price float64, stock int, userId string) error
 	DeleteStockItem(id string, userId string) error
 }
@@ -61,16 +61,18 @@ func (s *StockItemServiceImpl) ListStockItems(userId string) []models.StockItem 
 }
 
 // AddStockItem adds a new stock item
-func (s *StockItemServiceImpl) AddStockItem(name string, manufacturer string, price float64, stock int, userId string) {
+func (s *StockItemServiceImpl) AddStockItem(name string, manufacturer string, price float64, stock int, userId string) string {
 	println("AddStockItem called with userId:", userId)
+	newId := uuid.New().String()
 	newItem := models.StockItem{
-		ID:           uuid.New().String(),
+		ID:           newId,
 		Name:         name,
 		Stock:        stock,
 		Price:        price,
 		Manufacturer: manufacturer,
 	}
 	s.db.AddStockItem(newItem)
+	return newId
 }
 
 // UpdateStockItem updates an existing stock item
