@@ -1,0 +1,262 @@
+openapi: 3.1.0
+info:
+  title: Stock Item API
+  description: A simple API for managing stock items in an inventory management system
+  version: 1.0.0
+  contact:
+    name: IBM
+    url: https://ibm.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+paths:
+  /stock-items:
+    get:
+      summary: List all stock items
+      description: Returns a list of all stock items in the inventory
+      operationId: listStockItems
+      parameters:
+        - name: userId
+          in: query
+          description: ID of the user making the request
+          required: false
+          schema:
+            type: string
+            default: anonymous
+      responses:
+        '200':
+          description: A list of stock items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StockItem'
+
+  /stock-item:
+    post:
+      summary: Add a new stock item
+      description: Creates a new stock item in the inventory
+      operationId: addStockItem
+      parameters:
+        - name: name
+          in: query
+          description: Name of the stock item
+          required: true
+          schema:
+            type: string
+        - name: manufacturer
+          in: query
+          description: Manufacturer of the stock item
+          required: true
+          schema:
+            type: string
+        - name: price
+          in: query
+          description: Price of the stock item
+          required: true
+          schema:
+            type: number
+            format: double
+        - name: stock
+          in: query
+          description: Current stock level
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: userId
+          in: query
+          description: ID of the user making the request
+          required: false
+          schema:
+            type: string
+            default: anonymous
+      responses:
+        '200':
+          description: Stock item created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Bad request, missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /stock-item/{id}:
+    put:
+      summary: Update an existing stock item
+      description: Updates the details of an existing stock item
+      operationId: updateStockItem
+      parameters:
+        - name: id
+          in: path
+          description: ID of the stock item to update
+          required: true
+          schema:
+            type: string
+        - name: name
+          in: query
+          description: Updated name of the stock item
+          required: true
+          schema:
+            type: string
+        - name: manufacturer
+          in: query
+          description: Updated manufacturer of the stock item
+          required: true
+          schema:
+            type: string
+        - name: price
+          in: query
+          description: Updated price of the stock item
+          required: true
+          schema:
+            type: number
+            format: double
+        - name: stock
+          in: query
+          description: Updated stock level
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - name: userId
+          in: query
+          description: ID of the user making the request
+          required: false
+          schema:
+            type: string
+            default: anonymous
+      responses:
+        '200':
+          description: Stock item updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Bad request, missing or invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Stock item not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      summary: Delete a stock item
+      description: Deletes a stock item from the inventory
+      operationId: deleteStockItem
+      parameters:
+        - name: id
+          in: path
+          description: ID of the stock item to delete
+          required: true
+          schema:
+            type: string
+        - name: userId
+          in: query
+          description: ID of the user making the request
+          required: false
+          schema:
+            type: string
+            default: anonymous
+      responses:
+        '200':
+          description: Stock item deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Bad request, missing ID parameter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Stock item not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /health:
+    get:
+      summary: Health check endpoint
+      description: Returns the health status of the API
+      operationId: healthCheck
+      responses:
+        '200':
+          description: Health status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: UP
+
+components:
+  schemas:
+    StockItem:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the stock item
+          example: 8b6025ba-9ba5-4a22-9122-7363f4bd5dde
+        name:
+          type: string
+          description: Name of the stock item
+          example: Item 1
+        stock:
+          type: integer
+          format: int32
+          description: Current stock level
+          example: 100
+        price:
+          type: number
+          format: double
+          description: Price of the stock item
+          example: 10.5
+        manufacturer:
+          type: string
+          description: Manufacturer of the stock item
+          example: Sony
+      required:
+        - id
+        - name
+        - stock
+        - price
+        - manufacturer
+
+    SuccessResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Success message
+          example: Stock item added successfully
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+          example: Missing required parameters

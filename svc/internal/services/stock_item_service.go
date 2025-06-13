@@ -9,10 +9,10 @@ import (
 
 // StockItemService defines the interface for stock item operations
 type StockItemService interface {
-	ListStockItems() []models.StockItem
-	AddStockItem(name string, manufacturer string, price float64, stock int)
-	UpdateStockItem(id string, name string, manufacturer string, price float64, stock int) error
-	DeleteStockItem(id string) error
+	ListStockItems(userId string) []models.StockItem
+	AddStockItem(name string, manufacturer string, price float64, stock int, userId string)
+	UpdateStockItem(id string, name string, manufacturer string, price float64, stock int, userId string) error
+	DeleteStockItem(id string, userId string) error
 }
 
 // StockItemServiceImpl is the implementation of StockItemService
@@ -55,12 +55,14 @@ func NewStockItemService() *StockItemServiceImpl {
 }
 
 // ListStockItems returns all stock items
-func (s *StockItemServiceImpl) ListStockItems() []models.StockItem {
+func (s *StockItemServiceImpl) ListStockItems(userId string) []models.StockItem {
+	println("ListStockItems called with userId:", userId)
 	return s.db.GetAllStockItems()
 }
 
 // AddStockItem adds a new stock item
-func (s *StockItemServiceImpl) AddStockItem(name string, manufacturer string, price float64, stock int) {
+func (s *StockItemServiceImpl) AddStockItem(name string, manufacturer string, price float64, stock int, userId string) {
+	println("AddStockItem called with userId:", userId)
 	newItem := models.StockItem{
 		ID:           uuid.New().String(),
 		Name:         name,
@@ -72,7 +74,8 @@ func (s *StockItemServiceImpl) AddStockItem(name string, manufacturer string, pr
 }
 
 // UpdateStockItem updates an existing stock item
-func (s *StockItemServiceImpl) UpdateStockItem(id string, name string, manufacturer string, price float64, stock int) error {
+func (s *StockItemServiceImpl) UpdateStockItem(id string, name string, manufacturer string, price float64, stock int, userId string) error {
+	println("UpdateStockItem called with userId:", userId)
 	updatedItem := models.StockItem{
 		ID:           id,
 		Name:         name,
@@ -89,7 +92,8 @@ func (s *StockItemServiceImpl) UpdateStockItem(id string, name string, manufactu
 }
 
 // DeleteStockItem deletes a stock item by ID
-func (s *StockItemServiceImpl) DeleteStockItem(id string) error {
+func (s *StockItemServiceImpl) DeleteStockItem(id string, userId string) error {
+	println("DeleteStockItem called with userId:", userId)
 	success := s.db.DeleteStockItem(id)
 	if !success {
 		return &ItemNotFoundError{ID: id}

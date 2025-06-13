@@ -23,7 +23,12 @@ func NewStockItemController(service services.StockItemService) *StockItemControl
 
 // ListStockItems handles GET requests to list all stock items
 func (c *StockItemController) ListStockItems(ctx *gin.Context) {
-	items := c.service.ListStockItems()
+	userId := ctx.Query("userId")
+	if userId == "" {
+		userId = "anonymous" // Default value if not provided
+	}
+
+	items := c.service.ListStockItems(userId)
 	ctx.JSON(http.StatusOK, items)
 }
 
@@ -33,10 +38,15 @@ func (c *StockItemController) AddStockItem(ctx *gin.Context) {
 	manufacturer := ctx.Query("manufacturer")
 	priceStr := ctx.Query("price")
 	stockStr := ctx.Query("stock")
+	userId := ctx.Query("userId")
 
 	if name == "" || manufacturer == "" || priceStr == "" || stockStr == "" {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Missing required parameters"})
 		return
+	}
+
+	if userId == "" {
+		userId = "anonymous" // Default value if not provided
 	}
 
 	price, err := strconv.ParseFloat(priceStr, 64)
@@ -51,7 +61,7 @@ func (c *StockItemController) AddStockItem(ctx *gin.Context) {
 		return
 	}
 
-	c.service.AddStockItem(name, manufacturer, price, stock)
+	c.service.AddStockItem(name, manufacturer, price, stock, userId)
 	ctx.JSON(http.StatusOK, gin.H{"message": "Stock item added successfully"})
 }
 
@@ -62,10 +72,15 @@ func (c *StockItemController) UpdateStockItem(ctx *gin.Context) {
 	manufacturer := ctx.Query("manufacturer")
 	priceStr := ctx.Query("price")
 	stockStr := ctx.Query("stock")
+	userId := ctx.Query("userId")
 
 	if id == "" || name == "" || manufacturer == "" || priceStr == "" || stockStr == "" {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Missing required parameters"})
 		return
+	}
+
+	if userId == "" {
+		userId = "anonymous" // Default value if not provided
 	}
 
 	price, err := strconv.ParseFloat(priceStr, 64)
@@ -80,7 +95,7 @@ func (c *StockItemController) UpdateStockItem(ctx *gin.Context) {
 		return
 	}
 
-	err = c.service.UpdateStockItem(id, name, manufacturer, price, stock)
+	err = c.service.UpdateStockItem(id, name, manufacturer, price, stock, userId)
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
@@ -92,12 +107,18 @@ func (c *StockItemController) UpdateStockItem(ctx *gin.Context) {
 // DeleteStockItem handles DELETE requests to delete a stock item
 func (c *StockItemController) DeleteStockItem(ctx *gin.Context) {
 	id := ctx.Param("id")
+	userId := ctx.Query("userId")
+
 	if id == "" {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": "Missing ID parameter"})
 		return
 	}
 
-	err := c.service.DeleteStockItem(id)
+	if userId == "" {
+		userId = "anonymous" // Default value if not provided
+	}
+
+	err := c.service.DeleteStockItem(id, userId)
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
