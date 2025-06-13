@@ -17,7 +17,7 @@ class StockItem {
 export class StockItemsService implements StockItemsApi {
     constructor(private configService: ConfigService) { }
 
-    async listStockItems(): Promise<StockItemModel[]> {
+    async listStockItems(userId: string): Promise<StockItemModel[]> {
         const serviceUrl = this.configService.get<string>('SERVICE_URL');
         return new Promise((resolve, reject) => {
             get(`${serviceUrl}/stock-items`)

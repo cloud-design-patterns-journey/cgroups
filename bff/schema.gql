@@ -9,7 +9,7 @@ type Greeting {
 
 type Query {
   helloWorld: Greeting!
-  stockItems: [StockItem!]!
+  stockItems(userId: String!): [StockItem!]!
 }
 
 """stock-item"""

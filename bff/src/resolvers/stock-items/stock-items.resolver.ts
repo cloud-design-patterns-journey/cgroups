@@ -1,4 +1,4 @@
-import { Query, Resolver } from "@nestjs/graphql";
+import { Args, Query, Resolver } from "@nestjs/graphql";
 
 import { StockItem, StockItemModel } from "../../models";
 import { StockItemsApi } from "../../services";
@@ -7,8 +7,8 @@ import { StockItemsApi } from "../../services";
 export class StockItemResolver {
     constructor(private readonly service: StockItemsApi) { }
 
-    @Query(returns => [StockItem])
-    async stockItems(): Promise<StockItemModel[]> {
-        return this.service.listStockItems();
+    @Query(() => [StockItem])
+    async stockItems(@Args('userId', { type : () => String }) userId: string): Promise<StockItemModel[]> {
+        return this.service.listStockItems(userId);
     }
 }

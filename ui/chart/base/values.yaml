@@ -7,8 +7,8 @@ replicaCount: 1
 logLevel: "debug"
 
 image:
-  repository: replace
-  tag: replace
+  repository: "milou666/ibm-ui"
+  tag: "latest"
   pullPolicy: IfNotPresent
   port: 3000
 
@@ -21,23 +21,3 @@ service:
 
 route:
   enabled: false
-
-ingress:
-  enabled: true
-  appid:
-    enabled: false
-    # web or app - https://cloud.ibm.com/docs/services/appid?topic=appid-kube-auth
-    requestType: web
-
-#  host: hello
-  namespaceInHost: true
-  subdomain: containers.appdomain.cloud
-  path: "/"
-
-#  tlsSecretName: ""
-
-vcsInfo:
-  repoUrl: ""
-  branch: ""
-
-runtime: js
