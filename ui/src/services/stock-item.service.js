@@ -6,13 +6,14 @@ export class StockItemService {
     }
 
     async listStockItems() {
+        const userId = localStorage.getItem('sessionID');
         return axios({
-            url: '/api/graphql',
+            url: 'http://localhost:3001/graphql',
             method: "POST",
             data: {
                 query: `
                 {
-                    stockItems {
+                    stockItems(${userId}) {
                         id
                         manufacturer
                         name

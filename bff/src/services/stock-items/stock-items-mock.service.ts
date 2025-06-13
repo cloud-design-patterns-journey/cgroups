@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { StockItemsApi } from './stock-items.api';
 import { StockItemModel } from '../../models';
+import { SuccessResponse } from './stock-items.service';
 
 @Injectable()
 export class StockItemsMockService implements StockItemsApi {
@@ -32,4 +33,10 @@ async listStockItems(): Promise<StockItemModel[]> {
             }
         ];
     }
+async createStockItem(_userId: string, name: string, manufacturer: string, price: number, stock: number): Promise<SuccessResponse> {
+
+    return {
+      message: 'success'
+    };
+}
 }

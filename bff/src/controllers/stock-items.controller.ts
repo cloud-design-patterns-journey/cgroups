@@ -9,7 +9,7 @@ export class StockItemsController {
     @Get()
     async listStockItems(): Promise<any[]> {
         try {
-            return await this.service.listStockItems();
+            return await this.service.listStockItems("1");
         } catch (err) {
             throw new HttpException(err, 502);
         }

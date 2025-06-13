@@ -6,7 +6,9 @@ export class HelloWorldController {
   constructor(private readonly service: HelloWorldApi) {}
 
   @Get()
-  getHello(): string {
-    return this.service.getHello().greeting;
+  async getHello(): Promise<string> {
+    const greeting = await this.service.getHello();
+    console.log(greeting);
+    return greeting.greeting;
   }
 }

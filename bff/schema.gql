@@ -7,6 +7,10 @@ type Greeting {
   greeting: String!
 }
 
+type Mutation {
+  stockItem(stockItemInput: StockItemInput!): StockItem!
+}
+
 type Query {
   helloWorld: Greeting!
   stockItems(userId: String!): [StockItem!]!
@@ -20,4 +24,13 @@ type StockItem {
   picture: String!
   stock: Float!
   unitPrice: Float!
+}
+
+input StockItemInput {
+  manufacturer: String!
+  name: String!
+  picture: String!
+  stock: Float!
+  unitPrice: Float!
+  userId: String!
 }
